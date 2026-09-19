@@ -81,13 +81,22 @@ app.post('/products', async (req, res) => {
     return res.status(409).json({ message: 'Conflict: Product already exists' })
   }
 
+  let newId = 1;
+
+  if (products.length > 0) {
+    const allIds = products.map((p) => p.id); 
+    
+    const maxId = Math.max(...allIds); 
+    newId = maxId + 1
+  };
+
   const newProduct = {
-    id: products.length > 0 ? Math.max(...products.map((p) => p.id)) + 1 : 1,
+    id: newId,
     name: name.trim(),
     price,
     category: category.trim(),
     image: typeof image === 'string' ? image : ''
-  }
+  };
 
   try {
     const savedProduct = await addProduct(newProduct, isFail)
